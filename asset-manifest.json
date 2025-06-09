@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.css": "/static/css/main.c97912f4.css",
-    "main.js": "/static/js/main.b39fa9fd.js",
-    "index.html": "/index.html",
-    "main.c97912f4.css.map": "/static/css/main.c97912f4.css.map",
-    "main.b39fa9fd.js.map": "/static/js/main.b39fa9fd.js.map"
+    "main.css": "/music-league-visualizer/static/css/main.c97912f4.css",
+    "main.js": "/music-league-visualizer/static/js/main.b39fa9fd.js",
+    "index.html": "/music-league-visualizer/index.html",
+    "main.c97912f4.css.map": "/music-league-visualizer/static/css/main.c97912f4.css.map",
+    "main.b39fa9fd.js.map": "/music-league-visualizer/static/js/main.b39fa9fd.js.map"
   },
   "entrypoints": [
     "static/css/main.c97912f4.css",
