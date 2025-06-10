@@ -1,14 +1,60 @@
 .App {
-  text-align: center;
+  text-align: center; // This makes child elements like app-header and app-main center if they are inline-block.
+                      // We've set text-align: left on those to counteract.
 }
 
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  // Default CRA styles - these might need to be adjusted
+  // if they conflict with the new .app-header styles.
+  // For example, the default is full viewport height and flex centering.
+  // Our new .app-header is more of a traditional top banner.
+  // background-color: #282c34;
+  // min-height: 100vh;
+  // display: flex;
+  // flex-direction: column;
+  // align-items: center;
+  // justify-content: center;
+  // font-size: calc(10px + 2vmin);
+  // color: white;
+}
+
+/* New styles for App layout */
+.app-header {
+  min-height: auto;
+  display: block;
+  background-color: var(--light-gray);
+  color: var(--text-color);
+  padding: 20px;
+  margin-bottom: 20px;
+  text-align: left;
+  border-bottom: 1px solid var(--medium-gray);
+
+  h1 {
+    margin: 0;
+    font-size: 1.8em;
+    color: var(--text-color);
+    font-weight: 600;
+  }
+}
+
+.app-main {
+  padding: 20px;
+  text-align: left;
+}
+
+.app-initial-prompt {
+  margin-top: 20px;
+  font-size: 1rem;
+  color: var(--dark-gray);
+}
+
+.app-loading-message {
+  margin-top: 20px;
+  font-style: italic;
+  color: var(--dark-gray);
+  padding: 10px 15px;
+  background-color: var(--light-gray);
+  border-left: 4px solid var(--primary-color);
+  border-radius: 4px;
+  text-align: left;
 }

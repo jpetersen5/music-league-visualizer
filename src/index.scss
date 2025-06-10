@@ -1,0 +1,58 @@
+// src/index.scss
+
+// Define some root variables for easier theming/consistency
+:root {
+  --primary-color: #007bff;
+  --secondary-color: #6c757d;
+  --success-color: #28a745;
+  --danger-color: #dc3545;
+  --warning-color: #ffc107;
+  --info-color: #17a2b8;
+  --light-gray: #f8f9fa;
+  --medium-gray: #e9ecef; // For borders and subtle backgrounds
+  --dark-gray: #495057;   // For secondary text
+  --text-color: #212529;    // Main text color (almost black)
+  --link-color: var(--primary-color);
+  --white: #fff;
+  --black: #000;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--white);
+  color: var(--text-color);
+  line-height: 1.6;
+  font-size: 16px; // Set a base font size
+}
+
+// Optional: Global link styling (can be useful)
+a {
+  color: var(--link-color);
+  text-decoration: none; // Common practice to remove underline by default
+  &:hover {
+    text-decoration: underline; // Add underline on hover for clarity
+  }
+}
+
+// Headings basic reset (can be expanded)
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 0; // Often overridden in components but good base
+  margin-bottom: 0.5rem; // Default bottom margin
+  font-weight: 500; // Default font weight for headings
+  line-height: 1.2; // Consistent line height for headings
+}
+
+// Code and preformatted text
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}

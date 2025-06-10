@@ -1,0 +1,81 @@
+// src/components/RoundsList.scss
+.rounds-list-container {
+  margin-top: 20px;
+
+  h2 {
+    margin-bottom: 15px;
+    font-size: 1.5em;
+    color: var(--text-color);
+    text-align: left;
+  }
+
+  ul {
+    list-style-type: none;
+    padding-left: 0;
+  }
+
+  > p { // General messages like "No rounds found"
+    padding: 15px;
+    background-color: var(--light-gray);
+    border: 1px solid var(--medium-gray);
+    border-radius: 4px;
+    color: var(--dark-gray);
+    margin-top: 0;
+    text-align: left;
+  }
+}
+
+.rounds-list-error {
+  color: var(--danger-color);
+  background-color: #f8d7da; // Kept specific light red, as var(--light-gray) might be too subtle with red border
+  border: 1px solid var(--danger-color);
+  padding: 12px 15px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+.rounds-list-item {
+  cursor: pointer;
+  margin-bottom: 12px;
+  padding: 15px;
+  border: 1px solid var(--medium-gray);
+  background-color: var(--white);
+  border-radius: 5px;
+  transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  text-align: left;
+
+  &:hover {
+    background-color: var(--light-gray);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+  }
+
+  .rounds-list-item-name {
+    margin-top: 0;
+    margin-bottom: 8px;
+    font-size: 1.25em;
+    color: var(--primary-color);
+    font-weight: 500;
+  }
+
+  .rounds-list-item-description {
+    margin-bottom: 10px;
+    font-size: 0.95em;
+    color: var(--dark-gray);
+    line-height: 1.5;
+  }
+
+  .rounds-list-item-playlist {
+    margin-bottom: 0;
+    font-size: 0.9em;
+    a {
+      color: var(--info-color);
+      text-decoration: none;
+      font-weight: 500;
+      &:hover {
+        text-decoration: underline;
+        color: #117a8b; // Darker shade of info, kept hardcoded
+      }
+    }
+  }
+}
