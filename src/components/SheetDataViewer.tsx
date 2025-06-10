@@ -3,7 +3,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import RoundsList from './RoundsList';
 import RoundDetails from './RoundDetails';
 import CompetitorsView from './CompetitorsView';
-import { Round } from '../types';
+import { Round, Competitor, Submission, Vote } from '../types';
+import { getCompetitors, getSubmissions, getVotes } from '../services/googleSheets';
 
 interface SheetDataViewerProps {
   sheetId: string | null;
@@ -15,13 +16,46 @@ const SheetDataViewer: React.FC<SheetDataViewerProps> = ({ sheetId }) => {
   const [selectedRound, setSelectedRound] = useState<Round | null>(null);
   const [currentView, setCurrentView] = useState<View>('LIST_ROUNDS');
   const [allRounds, setAllRounds] = useState<Round[]>([]);
+  const [allCompetitors, setAllCompetitors] = useState<Competitor[]>([]);
+  const [allSubmissions, setAllSubmissions] = useState<Submission[]>([]);
+  const [allVotes, setAllVotes] = useState<Vote[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // Reset view when sheetId changes
+  // Reset view and fetch data when sheetId changes
   useEffect(() => {
     setSelectedRound(null);
     setCurrentView('LIST_ROUNDS');
     setAllRounds([]);
+    setAllCompetitors([]);
+    setAllSubmissions([]);
+    setAllVotes([]);
+    setError(null);
     console.log('SheetDataViewer: sheetId changed, state reset.', sheetId);
+
+    if (sheetId) {
+      const fetchData = async () => {
+        setIsLoading(true);
+        try {
+          console.log('SheetDataViewer: Fetching data for sheetId:', sheetId);
+          const [competitors, submissions, votes] = await Promise.all([
+            getCompetitors(sheetId),
+            getSubmissions(sheetId),
+            getVotes(sheetId),
+          ]);
+          setAllCompetitors(competitors);
+          setAllSubmissions(submissions);
+          setAllVotes(votes);
+          console.log('SheetDataViewer: Data fetched successfully.');
+        } catch (err) {
+          console.error('SheetDataViewer: Error fetching data:', err);
+          setError('Failed to fetch data. Please check the sheet ID and permissions.');
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      fetchData();
+    }
   }, [sheetId]);
 
   const handleRoundSelect = (roundId: string) => {
@@ -49,6 +83,19 @@ const SheetDataViewer: React.FC<SheetDataViewerProps> = ({ sheetId }) => {
     return null;
   }
 
+  if (isLoading) {
+    return <p>Loading data...</p>;
+  }
+
+  if (error) {
+    return <p>Error: {error}</p>;
+  }
+
+  // Only render child components if sheetId is present and data has loaded (or attempted to load)
+  if (!sheetId) {
+    return null; // Should not happen if App.tsx handles initial state correctly
+  }
+
   return (
     <>
       {currentView === 'LIST_ROUNDS' && (
@@ -62,11 +109,14 @@ const SheetDataViewer: React.FC<SheetDataViewerProps> = ({ sheetId }) => {
         <RoundDetails
           sheetId={sheetId}
           selectedRound={selectedRound}
+          allSubmissions={allSubmissions}
+          allVotes={allVotes}
+          allCompetitors={allCompetitors}
           onBackToList={handleBackToList}
         />
       )}
       {/* CompetitorsView is part of the data display for this sheet */}
-      <CompetitorsView sheetId={sheetId} />
+      <CompetitorsView sheetId={sheetId} competitors={allCompetitors} />
     </>
   );
 };
