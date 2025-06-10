@@ -1,0 +1,53 @@
+// src/components/VotesChart.scss
+.votes-chart-container {
+  margin-top: 25px;
+  margin-bottom: 30px;
+  padding: 20px;
+  background-color: var(--light-gray);
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+
+  h4 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.3em;
+    color: var(--text-color);
+    text-align: center;
+  }
+}
+
+.votes-chart-tooltip {
+  background-color: rgba(255, 255, 255, 0.98); // Kept specific rgba for high opacity white
+  padding: 12px 15px;
+  border: 1px solid var(--medium-gray);
+  border-radius: 4px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+  font-size: 0.9em;
+
+  .tooltip-label {
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: var(--text-color);
+    font-size: 1.05em;
+  }
+
+  .tooltip-intro {
+    margin-bottom: 6px;
+    color: var(--dark-gray);
+    font-weight: 500;
+  }
+
+  .tooltip-detail {
+    font-size: 0.95em;
+    color: var(--secondary-color);
+    margin-bottom: 4px;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+// Note: Styles for Recharts elements like YAxis ticks, Legend, LabelList, etc.,
+// are typically passed as props directly to those components if they can't be
+// targeted easily by general CSS/SCSS due to SVG rendering.
+// The current implementation correctly keeps these as props in the TSX file.
