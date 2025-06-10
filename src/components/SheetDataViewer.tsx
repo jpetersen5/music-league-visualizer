@@ -1,5 +1,5 @@
 // src/components/SheetDataViewer.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import RoundsList from './RoundsList';
 import RoundDetails from './RoundDetails';
 import CompetitorsView from './CompetitorsView';
@@ -34,9 +34,9 @@ const SheetDataViewer: React.FC<SheetDataViewerProps> = ({ sheetId }) => {
     }
   };
 
-  const handleRoundsFetched = (rounds: Round[]) => {
+  const handleRoundsFetched = useCallback((rounds: Round[]) => {
     setAllRounds(rounds);
-  };
+  }, []);
 
   const handleBackToList = () => {
     setSelectedRound(null);
