@@ -91,10 +91,8 @@ const SheetDataViewer: React.FC<SheetDataViewerProps> = ({ sheetId }) => {
     return <p>Error: {error}</p>;
   }
 
-  // Only render child components if sheetId is present and data has loaded (or attempted to load)
-  if (!sheetId) {
-    return null; // Should not happen if App.tsx handles initial state correctly
-  }
+  // At this point, sheetId is guaranteed to be non-null,
+  // and isLoading and error states have been handled.
 
   return (
     <>
@@ -107,7 +105,6 @@ const SheetDataViewer: React.FC<SheetDataViewerProps> = ({ sheetId }) => {
       )}
       {currentView === 'ROUND_DETAILS' && selectedRound && (
         <RoundDetails
-          sheetId={sheetId}
           selectedRound={selectedRound}
           allSubmissions={allSubmissions}
           allVotes={allVotes}
@@ -116,7 +113,7 @@ const SheetDataViewer: React.FC<SheetDataViewerProps> = ({ sheetId }) => {
         />
       )}
       {/* CompetitorsView is part of the data display for this sheet */}
-      <CompetitorsView sheetId={sheetId} competitors={allCompetitors} />
+      <CompetitorsView competitors={allCompetitors} />
     </>
   );
 };

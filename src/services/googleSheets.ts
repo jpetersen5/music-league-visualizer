@@ -49,7 +49,7 @@ async function fetchAndParseSheet<T>(url: string, options?: FetchAndParseOptions
     }
 
     return new Promise<T[]>((resolve, reject) => {
-      Papa.parse(csvText as any, {
+      Papa.parse(csvText, {
         header: true,
         skipEmptyLines: true,
         dynamicTyping: true, // Automatically convert numbers, booleans based on content

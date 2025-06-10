@@ -3,6 +3,11 @@
 // IMPORTANT: Replace with your actual backend API URL
 const API_URL = 'http://localhost:5000'; // Placeholder for your backend server
 
+interface BackendTokenResponse { // For our backend's /api/spotify/get_access_token
+  access_token: string;
+  // Add other properties if your backend returns them, e.g., expires_in, token_type
+}
+
 export interface SongData {
     image_url: string;
     tempo?: number | null;
@@ -16,6 +21,9 @@ export interface SongData {
     genres?: string[]; // Made genres optional as per backend logic (can be empty if not found)
 }
 
+// Type for the backend song data response
+type BackendSongResponse = SongData | { error: string };
+
 let spotifyAccessToken: string | null = null;
 let tokenPromise: Promise<string | null> | null = null; // To handle concurrent requests for token
 
@@ -26,13 +34,13 @@ const fetchNewSpotifyAccessToken = async (): Promise<string | null> => {
       console.error('Failed to fetch Spotify access token:', response.status, await response.text());
       throw new Error('Failed to fetch Spotify access token');
     }
-    const data = await response.json();
+    const data: BackendTokenResponse = await response.json();
     if (!data.access_token) {
         console.error('No access_token in response from backend:', data);
         throw new Error('No access_token in response from backend');
     }
     console.log("Fetched new Spotify Access Token");
-    return data.access_token || null;
+    return data.access_token; // data.access_token should exist due to the check above
   } catch (error) {
     console.error('Error fetching new Spotify access token:', error);
     spotifyAccessToken = null; // Clear token on error
@@ -117,16 +125,21 @@ export const fetchTrackDataFromBackend = async (
                     console.error(`Failed to fetch song data on retry (${retryResponse.status}):`, await retryResponse.text());
                     return null;
                 }
-                const retryData = await retryResponse.json();
-                return retryData.error ? null : (retryData as SongData); // Check for backend's own error structure
+                const retryData: BackendSongResponse = await retryResponse.json();
+                // Check for backend's own error structure
+                if ('error' in retryData) {
+                    console.warn(`Backend returned error on retry for song data: ${retryData.error}`, {artist, title, album});
+                    return null;
+                }
+                return retryData as SongData;
             }
             console.error(`Failed to fetch song data (${response.status}):`, await response.text());
             return null;
         }
 
-        const data = await response.json();
+        const data: BackendSongResponse = await response.json();
         // The backend might return an object with an "error" key for 404s or other issues
-        if (data.error) {
+        if ('error' in data) {
             console.warn(`Backend returned error for song data: ${data.error}`, {artist, title, album});
             return null;
         }
