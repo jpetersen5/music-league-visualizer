@@ -157,7 +157,6 @@ const RoundDetails: React.FC<RoundDetailsProps> = ({
             submissions={currentRoundSubmissions}
             spotifyTrackDetails={spotifyTrackDetails}
             // Pass competitorMap or lookup functions if needed by chart for names
-            getCompetitorName={getVoterName} // Or a more specific one if chart differentiates
           />
         ) : (
           !isLoadingSpotifyData && (currentRoundVotes.length === 0 || currentRoundSubmissions.length === 0) &&

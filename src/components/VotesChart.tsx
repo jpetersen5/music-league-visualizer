@@ -49,11 +49,9 @@ const VotesChart: React.FC<VotesChartProps> = ({ votes, submissions, spotifyTrac
     })
     .sort((a, b) => b.points - a.points);
 
-  if (chartData.length === 0 && votes.length > 0) {
-    return <p>Processed vote data is empty (e.g. all votes have 0 points or URIs not in submissions).</p>;
-  }
-   if (chartData.length === 0) {
-    return <p>No data available for chart display.</p>;
+  // If votes exist but chartData is empty, it means no submissions matched or all points were zero.
+  if (chartData.length === 0) {
+    return <p>No chart data to display (e.g., votes may not match submissions or all points are zero).</p>;
   }
 
   // Typed CustomTooltip
