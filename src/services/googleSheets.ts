@@ -49,7 +49,7 @@ async function fetchAndParseSheet<T>(url: string, options?: FetchAndParseOptions
     }
 
     return new Promise<T[]>((resolve, reject) => {
-      Papa.parse(csvText, {
+      Papa.parse(csvText as any, {
         header: true,
         skipEmptyLines: true,
         dynamicTyping: true, // Automatically convert numbers, booleans based on content
@@ -73,7 +73,7 @@ async function fetchAndParseSheet<T>(url: string, options?: FetchAndParseOptions
           }
           resolve(results.data as T[]);
         },
-        error: (error) => {
+        error: (error: Error) => {
           console.error("PapaParse error for URL", url, error);
           reject(new Error(`PapaParse failed: ${error.message}`));
         }
