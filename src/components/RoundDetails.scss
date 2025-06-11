@@ -241,17 +241,27 @@
       padding-left: 0;
 
       .submission-vote-item {
-        padding: 8px 0;
+        padding: 8px 10px; // Added some horizontal padding
         border-bottom: 1px solid #eee; // Separator for each vote
+        color: #212529; // Dark text color for contrast
 
         &:last-child {
           border-bottom: none;
         }
 
+        p, strong, em, span, div { // Target common text-holding elements and divs (like ExpandableText root)
+          color: inherit !important; // Ensure they use the parent's color, overriding specifics if necessary
+          font-size: 1em; // Standardize font size unless specifically overridden by nested styles
+        }
+
         p {
-          margin: 3px 0; // Compact spacing for vote lines
-          em { // For the ExpandableText in votes
-            font-size: 1em; // Reset from parent .submission-item-info em if needed, or inherit
+          margin: 4px 0; // Adjusted margin for better spacing with background
+          strong {
+            font-weight: 600; // Ensure voter name is bold
+          }
+          em {
+            font-style: italic; // Ensure comment text is italic
+            // font-size is inherited from p
           }
         }
       }
