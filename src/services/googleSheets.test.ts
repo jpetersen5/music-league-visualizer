@@ -1,23 +1,6 @@
 import { getRounds, getCompetitors, getVotes, getSubmissions, TEST_SHEET_ID } from './googleSheets';
 
 // Mock data representing the content of your CSV files
-// const mockRoundsCsv = `ID,Created,Name,Description,Playlist URL
-// const mockSubmissionsCsv = `Spotify URI,Title,Album,Artist,Submitter ID,Created,Comment,Round ID,Visible To Voters
-// spotify:track:track1_round1,Story,Grow,Chon,competitor_id_2,2025-03-03T01:35:47Z,Great opener,round_id_1,Yes
-// spotify:track:track2_round1,Iconoclast,Iconoclast,Symphony X,competitor_id_1,2025-03-03T01:20:58Z,Absolute banger,round_id_1,Yes
-// spotify:track:track3_round1,8 Gates Of Pleasure,Every Sound Has A Color,Night Verses,competitor_id_3,2025-03-03T08:03:03Z,,round_id_1,No
-// spotify:track:track1_round2,Circle,In a Reverie,Lacuna Coil,competitor_id_1,2025-03-11T18:27:40Z,90s classic,round_id_2,Yes
-// spotify:track:track2_round2,Fatal Tragedy,Metropolis Pt. 2,Dream Theater,competitor_id_3,2025-03-11T17:44:26Z,,round_id_2,Yes`;
-
-// const mockVotesCsv = `Spotify URI,Voter ID,Created,Points Assigned,Comment,Round ID
-// spotify:track:track1_round1,competitor_id_1,2025-03-07T00:32:10Z,3,Love Chon!,round_id_1
-// spotify:track:track1_round1,competitor_id_3,2025-03-07T00:32:16Z,2,Chon good,round_id_1
-// spotify:track:track2_round1,competitor_id_2,2025-03-07T00:53:12Z,1,Symphony X rocks,round_id_1
-// spotify:track:track1_round2,competitor_id_4,2025-03-13T22:36:33Z,3,Cool 90s song,round_id_2
-// spotify:track:track2_round2,competitor_id_1,2025-03-13T22:40:40Z,2,DT FTW,round_id_2
-// spotify:track:track2_round2,competitor_id_2,2025-03-14T01:22:15Z,1,,round_id_2`;
-
-// Mock data representing the content of your CSV files
 const mockRoundsCsv = `ID,Created,Name,Description,Playlist URL
 round_id_1,2025-03-03T00:46:13Z,Can Openers,Songs that were the first track on an album,https://open.spotify.com/playlist/2ievyieWski9zKu0XThEub
 round_id_2,2025-03-03T00:46:14Z,1990s,Songs released in the 1990s,https://open.spotify.com/playlist/1gnfQ3WfIY6jVem6WhYWgO
@@ -51,8 +34,6 @@ async function mockFetchImplementation(url: string): Promise<Response> {
     let ok = true;
     let status = 200;
     let statusText = 'OK';
-    // errorText is not directly used in the Response construction but good for clarity
-    // let errorText = '';
 
     if (url === '/testdata/rounds.csv') {
         csvData = mockRoundsCsv;
@@ -137,7 +118,7 @@ describe('googleSheets service - local data fetching', () => {
     test('getRounds should fetch and parse rounds.csv correctly', async () => {
         const rounds = await getRounds(TEST_SHEET_ID, true); // TEST_SHEET_ID is a placeholder
         expect(global.fetch).toHaveBeenCalledWith('/testdata/rounds.csv');
-        expect(rounds).toHaveLength(4); // Updated length
+        expect(rounds).toHaveLength(4);
         expect(rounds[0].Name).toBe('Can Openers');
         expect(rounds[0].ID).toBe('round_id_1');
         expect(rounds[1].PlaylistURL).toBe('https://open.spotify.com/playlist/1gnfQ3WfIY6jVem6WhYWgO');
@@ -149,7 +130,7 @@ describe('googleSheets service - local data fetching', () => {
     test('getCompetitors should fetch and parse competitors.csv correctly', async () => {
         const competitors = await getCompetitors(TEST_SHEET_ID, true);
         expect(global.fetch).toHaveBeenCalledWith('/testdata/competitors.csv');
-        expect(competitors).toHaveLength(4); // Updated length
+        expect(competitors).toHaveLength(4);
         expect(competitors[0].ID).toBe('competitor_id_1');
         expect(competitors[0].Name).toBe('NerdyFoxTV');
         expect(competitors[1].Name).toBe('Hababa');
@@ -160,7 +141,7 @@ describe('googleSheets service - local data fetching', () => {
     test('getVotes should fetch and parse votes.csv correctly', async () => {
         const votes = await getVotes(TEST_SHEET_ID, true);
         expect(global.fetch).toHaveBeenCalledWith('/testdata/votes.csv');
-        expect(votes).toHaveLength(6); // Updated length
+        expect(votes).toHaveLength(6);
         expect(votes[0].SpotifyURI).toBe('spotify:track:track1_round1');
         expect(votes[0].VoterID).toBe('competitor_id_1');
         expect(votes[0].PointsAssigned).toBe(3);
@@ -174,7 +155,7 @@ describe('googleSheets service - local data fetching', () => {
     test('getSubmissions should fetch and parse submissions.csv correctly', async () => {
         const submissions = await getSubmissions(TEST_SHEET_ID, true);
         expect(global.fetch).toHaveBeenCalledWith('/testdata/submissions.csv');
-        expect(submissions).toHaveLength(5); // Updated length
+        expect(submissions).toHaveLength(5);
         expect(submissions[0].SpotifyURI).toBe('spotify:track:track1_round1');
         expect(submissions[0].Title).toBe('Story');
         expect(submissions[0].Artist).toBe('Chon');

@@ -32,41 +32,40 @@
   text-align: left;
 }
 
-.competitor-list {
-  padding-left: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px; // Adds space between cards
-}
+// Styles for the new competitors table
+.competitors-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
 
-.competitor-card {
-  border: 1px solid var(--medium-gray);
-  padding: 12px 15px;
-  flex: 1 1 200px; // Flex properties for responsive cards
-  min-width: 200px; // Minimum width before wrapping
-  margin-bottom: 10px;
-  border-radius: 4px;
-  background-color: var(--white);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-
-  &:hover {
-    border-color: var(--secondary-color); // Use secondary for hover border
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  th, td {
+    border: 1px solid var(--medium-gray);
+    padding: 8px 12px;
+    text-align: left;
+    vertical-align: middle;
   }
 
-  .competitor-item-name { // Keeping sub-element class names for now
-    margin-top: 0;
-    margin-bottom: 6px;
-    font-size: 1.15em;
+  th {
+    background-color: var(--light-gray);
     color: var(--text-color);
-    font-weight: 500;
+    font-weight: 600;
   }
 
-  .competitor-item-id { // Keeping sub-element class names for now
-    margin-bottom: 0;
-    font-size: 0.9em;
-    color: var(--secondary-color);
-    font-family: monospace;
+  tbody tr:nth-child(odd) {
+    background-color: var(--white);
+  }
+
+  tbody tr:nth-child(even) {
+    background-color: var(--off-white); // A slightly different shade for even rows
+  }
+
+  tbody tr:hover {
+    background-color: var(--accent-color-light); // Lighter accent for hover
+    color: var(--text-color); // Ensure text remains readable
+  }
+
+  td:first-child { // Rank column
+    text-align: center;
+    font-weight: bold;
   }
 }

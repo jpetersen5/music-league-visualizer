@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import './App.scss';
 import SheetUrlInput from './components/SheetUrlInput';
-// Removed direct imports of RoundsList, RoundDetails, CompetitorsView, Round type
 import SheetDataViewer from './components/SheetDataViewer'; // New import
 
 function App() {

@@ -1,5 +1,5 @@
 // src/services/googleSheets.ts
-import Papa from 'papaparse'; // Removed ParseConfig import
+import Papa from 'papaparse';
 import { Round, Competitor, Vote, Submission } from '../types';
 
 export const TEST_SHEET_ID = '14xgTqTxigrXPKVnl1nqV-k0Sczr8hZziRdtEXjW2eVQ'; // User-provided test ID
@@ -321,7 +321,6 @@ export const getSubmissions = async (sheetId: string = TEST_SHEET_ID, useLocalTe
       throw new Error(String(error));
     }
   } else {
-    // Existing logic for fetching from Google Sheets (already modified in a previous step)
     const url = getSheetDataUrl(sheetId, SHEET_NAMES.submissions);
     console.log(`Fetching submissions from GSheet URL: ${url}`);
     try {
@@ -352,9 +351,6 @@ export const getSubmissions = async (sheetId: string = TEST_SHEET_ID, useLocalTe
           resolve([]);
           return;
         }
-
-        // Removed isProblematicFirstLine logic and related variables (firstLine, csvStringToParse variants)
-        // let csvStringToParse = csvText; // Defaulting to csvText directly
 
         let papaParseTransformHeaderOption: ((header: string) => string) | undefined =
             (header: string): string => {

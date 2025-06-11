@@ -40,7 +40,7 @@ const fetchNewSpotifyAccessToken = async (): Promise<string | null> => {
         throw new Error('No access_token in response from backend');
     }
     console.log("Fetched new Spotify Access Token");
-    return data.access_token; // data.access_token should exist due to the check above
+    return data.access_token;
   } catch (error) {
     console.error('Error fetching new Spotify access token:', error);
     spotifyAccessToken = null; // Clear token on error
@@ -149,5 +149,3 @@ export const fetchTrackDataFromBackend = async (
         return null;
     }
 };
-
-// The old export {}; is no longer needed as we have new exports.
