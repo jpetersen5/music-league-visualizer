@@ -98,7 +98,7 @@ export const getRounds = async (sheetId: string = TEST_SHEET_ID, useLocalTestDat
         // Attempt to get more info from the response body for local file errors
         const errorBody = await response.text();
         console.error(`Failed to fetch local rounds CSV: ${response.status} ${response.statusText}. Body: ${errorBody.substring(0, 500)}`);
-        throw new Error(`Failed to fetch local rounds CSV: ${response.statusText}. Ensure '/public${localUrl}' exists and is accessible.`);
+        throw new Error(`Failed to fetch local rounds CSV from '${localUrl}'. Status: ${response.status}${response.statusText ? ' - ' + response.statusText : ''}. Ensure the file exists and is accessible.`);
       }
       const csvText = await response.text();
       if (!csvText.trim()) {
@@ -158,7 +158,7 @@ export const getCompetitors = async (sheetId: string = TEST_SHEET_ID, useLocalTe
       if (!response.ok) {
         const errorBody = await response.text();
         console.error(`Failed to fetch local competitors CSV: ${response.status} ${response.statusText}. Body: ${errorBody.substring(0, 500)}`);
-        throw new Error(`Failed to fetch local competitors CSV: ${response.statusText}. Ensure '/public${localUrl}' exists and is accessible.`);
+        throw new Error(`Failed to fetch local competitors CSV from '${localUrl}'. Status: ${response.status}${response.statusText ? ' - ' + response.statusText : ''}. Ensure the file exists and is accessible.`);
       }
       const csvText = await response.text();
       if (!csvText.trim()) {
@@ -217,7 +217,7 @@ export const getVotes = async (sheetId: string = TEST_SHEET_ID, useLocalTestData
       if (!response.ok) {
         const errorBody = await response.text();
         console.error(`Failed to fetch local votes CSV: ${response.status} ${response.statusText}. Body: ${errorBody.substring(0, 500)}`);
-        throw new Error(`Failed to fetch local votes CSV: ${response.statusText}. Ensure '/public${localUrl}' exists and is accessible.`);
+        throw new Error(`Failed to fetch local votes CSV from '${localUrl}'. Status: ${response.status}${response.statusText ? ' - ' + response.statusText : ''}. Ensure the file exists and is accessible.`);
       }
       const csvText = await response.text();
       if (!csvText.trim()) {
@@ -276,7 +276,7 @@ export const getSubmissions = async (sheetId: string = TEST_SHEET_ID, useLocalTe
       if (!response.ok) {
         const errorBody = await response.text();
         console.error(`Failed to fetch local submissions CSV: ${response.status} ${response.statusText}. Body: ${errorBody.substring(0, 500)}`);
-        throw new Error(`Failed to fetch local submissions CSV: ${response.statusText}. Ensure '/public${localUrl}' exists and is accessible.`);
+        throw new Error(`Failed to fetch local submissions CSV from '${localUrl}'. Status: ${response.status}${response.statusText ? ' - ' + response.statusText : ''}. Ensure the file exists and is accessible.`);
       }
       const csvText = await response.text();
       if (!csvText.trim()) {
