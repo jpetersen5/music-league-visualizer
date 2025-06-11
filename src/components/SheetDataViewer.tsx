@@ -185,7 +185,6 @@ const SheetDataViewer: React.FC<SheetDataViewerProps> = ({ sheetId }) => {
       {currentView === 'LIST_ROUNDS' && (
         <RoundsList
           sheetId={useLocalFiles ? TEST_SHEET_ID : sheetId} // Pass relevant ID
-          rounds={allRounds} // Pass fetched rounds
           onRoundSelect={handleRoundSelect}
           // onRoundsFetched is kept for now, but its role might diminish
           // as SheetDataViewer now fetches all data including rounds.
