@@ -2,7 +2,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { getSentimentScore, getSentimentColor } from '../utils/sentimentUtils';
 import { Round, Submission, Vote, Competitor } from '../types';
-import { getSentimentScore } from '../utils/sentimentUtils'; // Already had getSentimentColor
 import { fetchTrackDataFromBackend, SongData } from '../services/spotifyAPI';
 import VotesChart from './VotesChart';
 import ExpandableText from './ExpandableText';
