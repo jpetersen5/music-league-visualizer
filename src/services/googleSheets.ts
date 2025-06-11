@@ -354,8 +354,6 @@ export const getSubmissions = async (sheetId: string = TEST_SHEET_ID, useLocalTe
         }
 
         const firstLine = lines[0];
-        const actualSubmissionHeaders = ["Spotify URI", "Title", "Album", "Artist", "Submitter ID", "Created", "Comment", "Round ID", "Visible To Voters"];
-        const transformedCorrectHeaders = actualSubmissionHeaders.map(h => h.replace(/\s+/g, '').replace(/[()]/g, ''));
 
         const isProblematicFirstLine = firstLine.startsWith('"Spotify URI spotify:track:');
 
