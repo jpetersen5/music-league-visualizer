@@ -218,6 +218,8 @@
     margin-top: 0; // Adjusted because the separator is now on submission-item-info
     // border-top: 1px dashed #ccc; // Removed, separator is now on submission-item-info's bottom
     padding-top: 15px; // Adjusted padding
+    padding: 8px;
+    border-radius: 4px;
     background-color: #f0f0f0; // Slightly different background
 
     .submission-votes-header {
