@@ -33,13 +33,17 @@
 }
 
 .competitor-list {
-  list-style-type: none;
   padding-left: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px; // Adds space between cards
 }
 
-.competitor-item {
+.competitor-card {
   border: 1px solid var(--medium-gray);
   padding: 12px 15px;
+  flex: 1 1 200px; // Flex properties for responsive cards
+  min-width: 200px; // Minimum width before wrapping
   margin-bottom: 10px;
   border-radius: 4px;
   background-color: var(--white);
@@ -51,7 +55,7 @@
     box-shadow: 0 2px 6px rgba(0,0,0,0.08);
   }
 
-  .competitor-item-name {
+  .competitor-item-name { // Keeping sub-element class names for now
     margin-top: 0;
     margin-bottom: 6px;
     font-size: 1.15em;
@@ -59,7 +63,7 @@
     font-weight: 500;
   }
 
-  .competitor-item-id {
+  .competitor-item-id { // Keeping sub-element class names for now
     margin-bottom: 0;
     font-size: 0.9em;
     color: var(--secondary-color);

@@ -90,14 +90,14 @@ const RoundsList: React.FC<RoundsListProps> = ({ sheetId, onRoundSelect, onRound
   return (
     <div className="rounds-list-container"> {/* Updated className */}
       <h2>Rounds</h2>
-      <ul>
+      <div className="rounds-card-list"> {/* Changed ul to div and added class */}
         {rounds.map((round) => (
           // Ensure round and round.ID are valid before rendering
           round && typeof round.ID !== 'undefined' ? (
-            <li
+            <div // Changed li to div
               key={round.ID}
               onClick={() => onRoundSelect(round.ID)}
-              className="rounds-list-item" // Added className
+              className="round-card" // Changed className
               // Removed inline styles and onMouseEnter/onMouseLeave
             >
               <h3 className="rounds-list-item-name">{round.Name || 'Unnamed Round'}</h3>
@@ -107,10 +107,10 @@ const RoundsList: React.FC<RoundsListProps> = ({ sheetId, onRoundSelect, onRound
                   <a href={round.PlaylistURL} target="_blank" rel="noopener noreferrer">Spotify Playlist</a>
                 </p>
               )}
-            </li>
+            </div>
           ) : null
         ))}
-      </ul>
+      </div>
     </div>
   );
 };

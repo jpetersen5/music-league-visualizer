@@ -166,7 +166,7 @@ const RoundDetails: React.FC<RoundDetailsProps> = ({
         <section className="submissions-section">
           <h3>Submissions ({currentRoundSubmissions.length})</h3>
           {currentRoundSubmissions.length === 0 && !isLoadingSpotifyData ? <p className="no-data-message">No submissions for this round.</p> : (
-            <ul>
+            <div className="submission-list"> {/* Changed ul to div and added a class */}
               {currentRoundSubmissions.map((sub) => {
                 const trackInfo = spotifyTrackDetails[sub.SpotifyURI];
                 const albumArtUrl = trackInfo?.image_url;
@@ -177,7 +177,7 @@ const RoundDetails: React.FC<RoundDetailsProps> = ({
                 );
 
                 return (
-                  <li key={sub.SpotifyURI + sub.SubmitterID} className="submission-item">
+                  <div key={sub.SpotifyURI + sub.SubmitterID} className="submission-card"> {/* Changed li to div and class name */}
                     {albumArtUrl && (
                       <img src={albumArtUrl} alt={sub.Album || 'Album art'} className="submission-item-artwork" />
                     )}
@@ -225,10 +225,10 @@ const RoundDetails: React.FC<RoundDetailsProps> = ({
                     {votesForThisSubmission.length === 0 && !isLoadingSpotifyData && (
                       <p className="no-votes-for-submission-message">No votes for this track yet.</p>
                     )}
-                  </li>
+                  </div>
                 );
               })}
-            </ul>
+            </div>
           )}
         </section>
 
