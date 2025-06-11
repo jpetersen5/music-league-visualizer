@@ -353,40 +353,21 @@ export const getSubmissions = async (sheetId: string = TEST_SHEET_ID, useLocalTe
           return;
         }
 
-        const firstLine = lines[0];
+        // Removed isProblematicFirstLine logic and related variables (firstLine, csvStringToParse variants)
+        // let csvStringToParse = csvText; // Defaulting to csvText directly
 
-        const isProblematicFirstLine = firstLine.startsWith('"Spotify URI spotify:track:');
-
-        let csvStringToParse = csvText;
-        // Unused variables removed:
-        // let papaParseHeaderOption: boolean = true;
-        // let papaParseColumnsOption: string[] | undefined = undefined;
         let papaParseTransformHeaderOption: ((header: string) => string) | undefined =
-            (header: string): string => header.replace(/\s+/g, '').replace(/[()]/g, '');
+            (header: string): string => {
+                const normalizedHeader = header.toLowerCase().replace(/\s+/g, '');
+                if (normalizedHeader === 'artist(s)') {
+                    return 'Artist';
+                }
+                return header.replace(/\s+/g, '').replace(/[()]/g, '');
+            };
 
-        if (isProblematicFirstLine) {
-          console.log("Submissions sheet: Problematic first line detected. Applying specific parsing logic. URL:", url, "First line sample:", firstLine.substring(0,150));
-          if (lines.length < 2) {
-            console.warn("Submissions CSV has only the problematic first line and no subsequent data lines. URL:", url);
-            resolve([]);
-            return;
-          }
-          csvStringToParse = lines.slice(1).join('\n');
-          // Options for problematic first line
-          // papaParseHeaderOption = false; // Will be set directly in config
-          // papaParseColumnsOption = transformedCorrectHeaders; // Will be set directly in config
-          // papaParseTransformHeaderOption = undefined; // Will be set directly in config
-        } else {
-          console.log("Submissions sheet: First line appears normal. Using standard parsing logic with header transformation. URL:", url, "First line sample:", firstLine.substring(0,150));
-          // Options for normal first line
-          // csvStringToParse = csvText; // Already default
-          // papaParseHeaderOption = true; // Already default
-          // papaParseColumnsOption = undefined; // Already default
-          // papaParseTransformHeaderOption = function; // Already default
-        }
-
-        if (!csvStringToParse.trim()) {
-            console.warn("Submissions CSV to parse is empty after potential problematic line handling for URL:", url);
+        // Ensure csvText itself is not empty before parsing
+        if (!csvText.trim()) {
+            console.warn("Submissions CSV to parse is empty for URL:", url);
             resolve([]);
             return;
         }
@@ -416,24 +397,13 @@ export const getSubmissions = async (sheetId: string = TEST_SHEET_ID, useLocalTe
             }
         };
 
-        let papaParseConfig: any; // Using any for papaParseConfig
-
-        if (isProblematicFirstLine) {
-            // csvStringToParse already has the problematic first line removed.
-            // Now, parse it by reading headers from the *new* first line.
-            papaParseConfig = {
-                ...commonConfigBase,
-                header: true, // Read headers from the (new) first line
-                transformHeader: papaParseTransformHeaderOption, // Use the existing header transformation
-            };
-        } else {
-            papaParseConfig = {
-                ...commonConfigBase,
-                header: true,
-                transformHeader: papaParseTransformHeaderOption, // Use the function defined earlier
-            };
-        }
-        Papa.parse(csvStringToParse, papaParseConfig);
+        // Simplified PapaParse configuration, always using header: true and the defined transformHeader
+        const papaParseConfig: any = { // Using any for papaParseConfig
+            ...commonConfigBase,
+            header: true,
+            transformHeader: papaParseTransformHeaderOption,
+        };
+        Papa.parse(csvText, papaParseConfig); // Always parse the original csvText
       });
 
     } catch (error) {

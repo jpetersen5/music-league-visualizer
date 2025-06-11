@@ -129,6 +129,7 @@
   width: 100%; // Ensure it takes full width of its flex container part
   max-width: 700px; // Max width for readability
   display: flex; // For internal layout of artwork and info
+  flex-direction: column; // Stack children vertically
   align-items: flex-start;
   box-shadow: 0 1px 3px rgba(0,0,0,0.05); // Kept existing shadow
   flex: 1 1 300px; // Flex properties for responsive cards - this might conflict with width: 100% if parent is not flex.
@@ -146,8 +147,11 @@
   }
 
   .submission-item-info { // Class name kept for internal elements
-    flex-grow: 1;
-    margin-bottom: 15px; // Space between info and votes
+    // flex-grow: 1; // Removed as per request
+    width: 100%; // Ensure it takes full width in column layout
+    margin-bottom: 15px; // Space between info and potential next element
+    padding-bottom: 15px; // Space before the new border
+    border-bottom: 1px solid var(--medium-gray); // Visual separator
 
     strong {
       font-size: 1.15em;
@@ -211,9 +215,10 @@
 
   .submission-votes-section {
     width: 100%; // Ensure it takes full width within the card
-    margin-top: 15px;
-    border-top: 1px dashed #ccc; // Separator for votes section
-    padding-top: 10px;
+    margin-top: 0; // Adjusted because the separator is now on submission-item-info
+    // border-top: 1px dashed #ccc; // Removed, separator is now on submission-item-info's bottom
+    padding-top: 15px; // Adjusted padding
+    background-color: #f0f0f0; // Slightly different background
 
     .submission-votes-header {
       font-size: 1.1em;
