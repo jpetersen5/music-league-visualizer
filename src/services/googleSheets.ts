@@ -1,5 +1,5 @@
 // src/services/googleSheets.ts
-import Papa from 'papaparse';
+import Papa from 'papaparse'; // Removed ParseConfig import
 import { Round, Competitor, Vote, Submission } from '../types';
 
 export const TEST_SHEET_ID = '14xgTqTxigrXPKVnl1nqV-k0Sczr8hZziRdtEXjW2eVQ'; // User-provided test ID
@@ -346,61 +346,94 @@ export const getSubmissions = async (sheetId: string = TEST_SHEET_ID, useLocalTe
 
       const lines = csvText.split(/\r\n|\n|\r/);
 
-      if (lines.length === 0 || (lines.length === 1 && lines[0].trim() === '')) {
-        console.warn("Submissions CSV is effectively empty for URL:", url);
-        return [];
-      }
-
-      let csvToParse: string;
-      const firstLine = lines[0];
-      const isMalformed = firstLine.startsWith('"Spotify URI') &&
-                          firstLine.includes('spotify:track:') &&
-                          firstLine.split('","').length < 3;
-
-      if (isMalformed) {
-        console.log("Malformed header detected in submissions sheet. Applying fix. Original first line sample:", firstLine.substring(0,150));
-        if (lines.length < 2) {
-          console.warn("Submissions CSV has only a malformed header and no subsequent lines. No data to parse for URL:", url);
-          return [];
-        }
-        csvToParse = lines.slice(1).join('\n');
-      } else {
-        console.log("Submissions sheet header appears normal. Parsing as is. First line sample:", firstLine.substring(0,150));
-        csvToParse = csvText;
-      }
-
-      if (!csvToParse.trim()) {
-          console.warn("Submissions CSV to parse is empty after potential fix for URL:", url);
-          return [];
-      }
-
       return new Promise<Submission[]>((resolve, reject) => {
-        Papa.parse(csvToParse, {
-          header: true,
-          skipEmptyLines: 'greedy',
-          dynamicTyping: true,
-          transformHeader: (header: string) => header.replace(/\s+/g, '').replace(/[()]/g, ''),
-          complete: (results) => {
-            if (results.errors.length > 0) {
-              results.errors.forEach(err => console.error("PapaParse submissions error:", err.message, "(Code:", err.code, ") for URL", url));
-              const firstError = results.errors[0];
-               if (firstError.code === 'UndetectableDelimiter') {
-                   reject(new Error("Parsing error (submissions): Could not detect delimiter. Is the data valid CSV?"));
-              } else {
-                  reject(new Error(`Error parsing CSV data for submissions from ${url}. First error: ${firstError.message} (Code: ${firstError.code})`));
-              }
-              return;
-            }
-            const filteredData = results.data.filter(row =>
-              Object.values(row as any).some(val => val !== null && val !== '')
-            ) as Submission[];
-            resolve(filteredData);
-          },
-          error: (error: Error) => {
-            console.error("PapaParse critical error for submissions URL", url, error);
-            reject(new Error(`PapaParse failed critically for submissions: ${error.message}`));
+        if (lines.length === 0 || (lines.length === 1 && lines[0].trim() === '')) {
+          console.warn("Submissions CSV is effectively empty (after splitting lines) for URL:", url);
+          resolve([]);
+          return;
+        }
+
+        const firstLine = lines[0];
+        const actualSubmissionHeaders = ["Spotify URI", "Title", "Album", "Artist", "Submitter ID", "Created", "Comment", "Round ID", "Visible To Voters"];
+        const transformedCorrectHeaders = actualSubmissionHeaders.map(h => h.replace(/\s+/g, '').replace(/[()]/g, ''));
+
+        const isProblematicFirstLine = firstLine.startsWith('"Spotify URI spotify:track:');
+
+        let csvStringToParse = csvText;
+        // Unused variables removed:
+        // let papaParseHeaderOption: boolean = true;
+        // let papaParseColumnsOption: string[] | undefined = undefined;
+        let papaParseTransformHeaderOption: ((header: string) => string) | undefined =
+            (header: string): string => header.replace(/\s+/g, '').replace(/[()]/g, '');
+
+        if (isProblematicFirstLine) {
+          console.log("Submissions sheet: Problematic first line detected. Applying specific parsing logic. URL:", url, "First line sample:", firstLine.substring(0,150));
+          if (lines.length < 2) {
+            console.warn("Submissions CSV has only the problematic first line and no subsequent data lines. URL:", url);
+            resolve([]);
+            return;
           }
-        });
+          csvStringToParse = lines.slice(1).join('\n');
+          // Options for problematic first line
+          // papaParseHeaderOption = false; // Will be set directly in config
+          // papaParseColumnsOption = transformedCorrectHeaders; // Will be set directly in config
+          // papaParseTransformHeaderOption = undefined; // Will be set directly in config
+        } else {
+          console.log("Submissions sheet: First line appears normal. Using standard parsing logic with header transformation. URL:", url, "First line sample:", firstLine.substring(0,150));
+          // Options for normal first line
+          // csvStringToParse = csvText; // Already default
+          // papaParseHeaderOption = true; // Already default
+          // papaParseColumnsOption = undefined; // Already default
+          // papaParseTransformHeaderOption = function; // Already default
+        }
+
+        if (!csvStringToParse.trim()) {
+            console.warn("Submissions CSV to parse is empty after potential problematic line handling for URL:", url);
+            resolve([]);
+            return;
+        }
+
+        const commonConfigBase: any = { // Using any for commonConfigBase
+            skipEmptyLines: 'greedy',
+            dynamicTyping: true,
+            complete: (results: Papa.ParseResult<Submission>) => {
+                if (results.errors.length > 0) {
+                    results.errors.forEach(err => console.error("PapaParse submissions error:", err.message, `(Code: ${err.code}) for URL`, url));
+                    const firstError = results.errors[0];
+                    if (firstError.code === 'UndetectableDelimiter') {
+                        reject(new Error("Parsing error (submissions): Could not detect delimiter. Is the data valid CSV?"));
+                    } else {
+                        reject(new Error(`Error parsing CSV data for submissions from ${url}. First error: ${firstError.message} (Code: ${firstError.code})`));
+                    }
+                    return;
+                }
+                const filteredData = (results.data as unknown as Array<Record<string, any>>).filter(row =>
+                    Object.values(row).some(val => val !== null && val !== '')
+                ) as Submission[];
+                resolve(filteredData);
+            },
+            error: (error: Error) => {
+                console.error("PapaParse critical error for submissions URL", url, error);
+                reject(new Error(`PapaParse failed critically for submissions: ${error.message}`));
+            }
+        };
+
+        let papaParseConfig: any; // Using any for papaParseConfig
+
+        if (isProblematicFirstLine) {
+            papaParseConfig = {
+                ...commonConfigBase,
+                header: false,
+                columns: transformedCorrectHeaders,
+            };
+        } else {
+            papaParseConfig = {
+                ...commonConfigBase,
+                header: true,
+                transformHeader: papaParseTransformHeaderOption, // Use the function defined earlier
+            };
+        }
+        Papa.parse(csvStringToParse, papaParseConfig);
       });
 
     } catch (error) {
