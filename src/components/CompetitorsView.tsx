@@ -22,11 +22,17 @@ const CompetitorsView: React.FC<CompetitorsViewProps> = ({ competitors }) => {
     return <p>No competitors data available.</p>;
   }
 
+  const sortedCompetitors = [...competitors].sort((a, b) => {
+    const pointsA = a.totalPoints === undefined ? 0 : a.totalPoints;
+    const pointsB = b.totalPoints === undefined ? 0 : b.totalPoints;
+    return pointsB - pointsA; // For descending order
+  });
+
   return (
     <div className="competitors-view-container">
       <h2>Competitors</h2>
       <div className="competitor-list">
-        {competitors.map((competitor) => (
+        {sortedCompetitors.map((competitor) => (
           <CompetitorCard key={competitor.ID} competitor={competitor} pointsLabel="Total Points:" />
         ))}
       </div>

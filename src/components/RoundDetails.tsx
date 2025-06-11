@@ -5,6 +5,7 @@ import { Round, Submission, Vote, Competitor } from '../types'; // Added Competi
 import { fetchTrackDataFromBackend, SongData } from '../services/spotifyAPI';
 import VotesChart from './VotesChart';
 import CompetitorCard from './CompetitorCard'; // New import
+import ExpandableText from './ExpandableText'; // Added import
 import './RoundDetails.scss'; // Import SCSS file
 
 interface RoundDetailsProps {
@@ -179,6 +180,10 @@ const RoundDetails: React.FC<RoundDetailsProps> = ({
                   vote => vote.SpotifyURI === sub.SpotifyURI
                 );
 
+                const sortedVotesForThisSubmission = [...votesForThisSubmission].sort((a, b) => {
+                  return b.PointsAssigned - a.PointsAssigned; // For descending order
+                });
+
                 return (
                   <div key={sub.SpotifyURI + sub.SubmitterID} className="submission-card"> {/* Changed li to div and class name */}
                     {albumArtUrl && (
@@ -193,7 +198,7 @@ const RoundDetails: React.FC<RoundDetailsProps> = ({
                       )}
                       <br />
                       Submitted by: {submitterName} {/* Display name */}
-                      {sub.Comment && <p><em>Comment: {sub.Comment}</em></p>}
+                      {sub.Comment && <p><em>Comment: <ExpandableText text={sub.Comment} maxLength={150} /></em></p>}
                       <p className="submission-item-visibility">Visible to Voters: {sub.VisibleToVoters}</p>
                       {trackInfo && (
                         <div className="submission-spotify-data">
@@ -209,16 +214,16 @@ const RoundDetails: React.FC<RoundDetailsProps> = ({
                       )}
                     </div>
                     {/* Display votes for this submission */}
-                    {votesForThisSubmission.length > 0 && (
+                    {sortedVotesForThisSubmission.length > 0 && (
                       <div className="submission-votes-section">
                         <h4 className="submission-votes-header">Votes Received:</h4>
                         <ul className="submission-votes-list">
-                          {votesForThisSubmission.map((vote, voteIndex) => {
+                          {sortedVotesForThisSubmission.map((vote, voteIndex) => {
                             const voterName = getVoterName(vote.VoterID);
                             return (
                               <li key={`${vote.VoterID}-${vote.SpotifyURI}-${voteIndex}`} className="submission-vote-item">
                                 <p><strong>{voterName}</strong> ({vote.PointsAssigned} points)</p>
-                                {vote.Comment && <p><em>Comment: {vote.Comment}</em></p>}
+                                {vote.Comment && <p><em><ExpandableText text={vote.Comment} maxLength={100} /></em></p>}
                               </li>
                             );
                           })}
@@ -243,7 +248,11 @@ const RoundDetails: React.FC<RoundDetailsProps> = ({
         <h3>Standings (Up to {selectedRound.Name})</h3>
         {competitorsForRoundView && competitorsForRoundView.length > 0 ? (
           <div className="competitor-list"> {/* Can reuse 'competitor-list' class if styling is similar */}
-            {competitorsForRoundView.map((competitor) => (
+            {[...competitorsForRoundView].sort((a, b) => {
+              const pointsA = a.totalPoints === undefined ? 0 : a.totalPoints;
+              const pointsB = b.totalPoints === undefined ? 0 : b.totalPoints;
+              return pointsB - pointsA; // For descending order
+            }).map((competitor) => (
               <CompetitorCard key={competitor.ID} competitor={competitor} pointsLabel="Cumulative Points:" />
             ))}
           </div>

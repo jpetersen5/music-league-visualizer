@@ -1,0 +1,15 @@
+// src/components/ExpandableText.scss
+.expandable-text-button {
+  background: none;
+  border: none;
+  color: blue; // Or a theme color
+  cursor: pointer;
+  padding: 0;
+  margin-left: 5px;
+  font-size: inherit; // Match surrounding text
+  text-decoration: underline;
+
+  &:hover {
+    color: darkblue; // Or a darker theme color
+  }
+}

@@ -121,15 +121,18 @@
 
 // Submission Card (formerly Submission Item)
 .submission-card {
-  border: 1px solid var(--medium-gray);
+  background-color: #f9f9f9; // Light background for the card
+  border: 1px solid #ddd; // Updated border
+  border-radius: 8px; // Updated border-radius
   padding: 15px;
-  // margin-bottom: 15px; // Gap handles this now
+  margin-bottom: 20px; // Explicit margin-bottom
+  width: 100%; // Ensure it takes full width of its flex container part
+  max-width: 700px; // Max width for readability
   display: flex; // For internal layout of artwork and info
   align-items: flex-start;
-  border-radius: 4px;
-  background-color: var(--white);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-  flex: 1 1 300px; // Flex properties for responsive cards
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05); // Kept existing shadow
+  flex: 1 1 300px; // Flex properties for responsive cards - this might conflict with width: 100% if parent is not flex.
+                     // Assuming .submission-list is display: flex, this is fine.
   min-width: 300px; // Minimum width before wrapping, adjust as needed
 
   .submission-item-artwork { // Class name kept for internal elements
@@ -144,6 +147,7 @@
 
   .submission-item-info { // Class name kept for internal elements
     flex-grow: 1;
+    margin-bottom: 15px; // Space between info and votes
 
     strong {
       font-size: 1.15em;
@@ -153,10 +157,10 @@
       margin-bottom: 4px;
     }
 
-    em {
-      font-size: 0.9em;
-      color: var(--secondary-color);
-      display: block;
+    em { // This is for the "Comment: " part and the ExpandableText itself
+      font-size: 0.9em; // Keep this, ExpandableText will inherit or can be styled separately
+      color: var(--secondary-color); // This will color "Comment: "
+      display: block; // Ensure p takes block for em
       margin-top: 8px;
     }
 
@@ -174,9 +178,76 @@
         text-decoration: underline;
       }
     }
+
+    // Styles for .submission-spotify-data when it's INSIDE .submission-item-info
+    // as per JSX structure. The provided SCSS had it as a direct child of .submission-card.
+    // Let's use the existing more detailed .submission-spotify-data styles for now,
+    // and assume they will apply correctly. If not, this would be an adjustment.
+    // For this step, I will add the NEW simpler .submission-spotify-data version
+    // as a direct child of .submission-card as per the prompt's SCSS,
+    // and remove the old top-level one.
+  }
+
+  // New simpler .submission-spotify-data as per prompt, direct child of .submission-card
+  .submission-spotify-data {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+    font-size: 0.9em;
+    color: #555; // This will apply to text directly inside this div if any
+    // This is simpler than the original .submission-spotify-data.
+    // Note: The original .submission-spotify-data styling was more detailed.
+    // This change assumes the simpler styling is intended.
+    p { // Targeting paragraphs inside the new .submission-spotify-data
+        margin: 4px 0; // From original .submission-spotify-data p styling
+        strong {
+           // From original .submission-spotify-data p strong styling
+          font-weight: 600;
+          display: block;
+          margin-bottom: 5px;
+        }
+    }
+  }
+
+  .submission-votes-section {
+    width: 100%; // Ensure it takes full width within the card
+    margin-top: 15px;
+    border-top: 1px dashed #ccc; // Separator for votes section
+    padding-top: 10px;
+
+    .submission-votes-header {
+      font-size: 1.1em;
+      margin-bottom: 10px;
+      color: var(--text-color); // Ensure header color
+    }
+
+    .submission-votes-list {
+      list-style-type: none;
+      padding-left: 0;
+
+      .submission-vote-item {
+        padding: 8px 0;
+        border-bottom: 1px solid #eee; // Separator for each vote
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        p {
+          margin: 3px 0; // Compact spacing for vote lines
+          em { // For the ExpandableText in votes
+            font-size: 1em; // Reset from parent .submission-item-info em if needed, or inherit
+          }
+        }
+      }
+    }
   }
 }
 
+// Remove old, top-level .submission-spotify-data if it's being replaced by the one inside .submission-card
+// This is a significant change; if .submission-spotify-data is used elsewhere, this would break it.
+// Assuming it's only for submission cards.
+/*
 .submission-spotify-data {
   margin-top: 12px;
   font-size: 0.875em;
@@ -196,8 +267,12 @@
     }
   }
 }
+*/
 
-// Vote Item
+// Vote Item - existing styling, ensure it's not conflicting
+// The new styles are for .submission-vote-item (list item) and its contents
+// The old .vote-item seems to be for a different context or an older version.
+// Let's assume .vote-item is not what we are styling now.
 .vote-item {
   border: 1px solid var(--medium-gray);
   padding: 12px 15px;
@@ -239,5 +314,20 @@
     color: var(--secondary-color);
     display: block;
     margin-top: 8px;
+  }
+}
+
+// Competitors Cumulative Points Section - already exists, so no changes needed here
+// based on current subtask, just ensuring it's not removed or broken.
+.competitors-cumulative-points-section {
+  margin-top: 25px;
+  padding-top: 25px;
+  border-top: 1px solid var(--medium-gray);
+
+  h3 {
+    margin-top: 0;
+    margin-bottom: 18px;
+    font-size: 1.4em;
+    color: var(--dark-gray);
   }
 }
