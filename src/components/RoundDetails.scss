@@ -105,24 +105,34 @@
     color: var(--dark-gray);
   }
 
-  ul {
+  ul { // This will apply to any remaining ul, like the votes list
     list-style-type: none;
     padding-left: 0;
   }
 }
 
-// Submission Item
-.submission-item {
+// Styles for the new submission list container
+.submission-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px; // Space between cards
+  padding-left: 0; // Reset padding if any was inherited
+}
+
+// Submission Card (formerly Submission Item)
+.submission-card {
   border: 1px solid var(--medium-gray);
   padding: 15px;
-  margin-bottom: 15px;
-  display: flex;
+  // margin-bottom: 15px; // Gap handles this now
+  display: flex; // For internal layout of artwork and info
   align-items: flex-start;
   border-radius: 4px;
   background-color: var(--white);
   box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  flex: 1 1 300px; // Flex properties for responsive cards
+  min-width: 300px; // Minimum width before wrapping, adjust as needed
 
-  .submission-item-artwork {
+  .submission-item-artwork { // Class name kept for internal elements
     width: 100px;
     height: 100px;
     margin-right: 20px;
@@ -132,7 +142,7 @@
     border: 1px solid var(--medium-gray);
   }
 
-  .submission-item-info {
+  .submission-item-info { // Class name kept for internal elements
     flex-grow: 1;
 
     strong {

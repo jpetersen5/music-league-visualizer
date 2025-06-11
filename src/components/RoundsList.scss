@@ -9,9 +9,15 @@
     text-align: left;
   }
 
-  ul {
-    list-style-type: none;
-    padding-left: 0;
+  // ul { // No longer directly styling ul here as it's replaced by div.rounds-card-list
+  //   list-style-type: none;
+  //   padding-left: 0;
+  // }
+  .rounds-card-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px; // Space between cards
+    padding-left: 0; // Remove any default padding
   }
 
   > p { // General messages like "No rounds found"
@@ -35,22 +41,24 @@
   text-align: left;
 }
 
-.rounds-list-item {
+.round-card { // Renamed from .rounds-list-item
   cursor: pointer;
-  margin-bottom: 12px;
+  // margin-bottom: 12px; // Replaced by gap in .rounds-card-list
   padding: 15px;
   border: 1px solid var(--medium-gray);
   background-color: var(--white);
   border-radius: 5px;
   transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
   text-align: left;
+  flex: 1 1 280px; // Flex properties for responsive cards
+  min-width: 280px; // Minimum width before wrapping
 
   &:hover {
     background-color: var(--light-gray);
     box-shadow: 0 3px 8px rgba(0,0,0,0.12);
   }
 
-  .rounds-list-item-name {
+  .rounds-list-item-name { // Keeping internal class names for now
     margin-top: 0;
     margin-bottom: 8px;
     font-size: 1.25em;

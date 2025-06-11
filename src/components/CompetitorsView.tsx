@@ -24,14 +24,14 @@ const CompetitorsView: React.FC<CompetitorsViewProps> = ({ competitors }) => {
   return (
     <div className="competitors-view-container">
       <h2>Competitors</h2>
-      <ul className="competitor-list">
+      <div className="competitor-list">
         {competitors.map((competitor) => (
-          <li key={competitor.ID} className="competitor-item">
+          <div key={competitor.ID} className="competitor-card">
             <h3 className="competitor-item-name">{competitor.Name || 'Unnamed Competitor'}</h3>
             <p className="competitor-item-id">ID: {competitor.ID}</p>
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 };
