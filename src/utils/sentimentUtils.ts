@@ -15,9 +15,12 @@ export function getSentimentScore(text: string): number {
   const sentiment = new Sentiment();
   const analysis = sentiment.analyze(text);
 
+  // Ensure analysis.score is a number, default to 0 if not.
+  const rawScore = typeof analysis.score === 'number' ? analysis.score : 0;
+
   // Normalize the raw score. The library's typical effective range for 'score'
   // is often within -5 to +5. Dividing by 5 is a reasonable normalization strategy.
-  const normalizedScore = analysis.score / 5;
+  const normalizedScore = rawScore / 5;
 
   // Clamp the result to be within -1 and 1 to handle potential outliers.
   return Math.max(-1, Math.min(1, normalizedScore));
