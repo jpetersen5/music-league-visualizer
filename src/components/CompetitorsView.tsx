@@ -1,6 +1,7 @@
 // src/components/CompetitorsView.tsx
 import React from 'react';
 import { Competitor } from '../types';
+import CompetitorCard from './CompetitorCard'; // New import
 // Removed: import { getCompetitors } from '../services/googleSheets';
 import './CompetitorsView.scss'; // Import SCSS file
 
@@ -26,10 +27,7 @@ const CompetitorsView: React.FC<CompetitorsViewProps> = ({ competitors }) => {
       <h2>Competitors</h2>
       <div className="competitor-list">
         {competitors.map((competitor) => (
-          <div key={competitor.ID} className="competitor-card">
-            <h3 className="competitor-item-name">{competitor.Name || 'Unnamed Competitor'}</h3>
-            <p className="competitor-item-id">ID: {competitor.ID}</p>
-          </div>
+          <CompetitorCard key={competitor.ID} competitor={competitor} pointsLabel="Total Points:" />
         ))}
       </div>
     </div>

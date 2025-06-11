@@ -4,6 +4,7 @@ import { Round, Submission, Vote, Competitor } from '../types'; // Added Competi
 // Removed: import { getSubmissions, getVotes } from '../services/googleSheets';
 import { fetchTrackDataFromBackend, SongData } from '../services/spotifyAPI';
 import VotesChart from './VotesChart';
+import CompetitorCard from './CompetitorCard'; // New import
 import './RoundDetails.scss'; // Import SCSS file
 
 interface RoundDetailsProps {
@@ -13,6 +14,7 @@ interface RoundDetailsProps {
   allSubmissions: Submission[];
   allVotes: Vote[];
   allCompetitors: Competitor[];
+  competitorsForRoundView: Competitor[]; // New: Competitors with points up to this round
 }
 
 const normalizeID = (id: string): string => {
@@ -25,6 +27,7 @@ const RoundDetails: React.FC<RoundDetailsProps> = ({
   allSubmissions,
   allVotes,
   allCompetitors,
+  competitorsForRoundView, // New prop
 }) => {
   const [currentRoundSubmissions, setCurrentRoundSubmissions] = useState<Submission[]>([]);
   const [currentRoundVotes, setCurrentRoundVotes] = useState<Vote[]>([]);
@@ -234,6 +237,20 @@ const RoundDetails: React.FC<RoundDetailsProps> = ({
 
         {/* The old standalone "Votes" section is now removed. */}
       </>
+
+      {/* New section for cumulative points of competitors up to this round */}
+      <section className="competitors-cumulative-points-section">
+        <h3>Standings (Up to {selectedRound.Name})</h3>
+        {competitorsForRoundView && competitorsForRoundView.length > 0 ? (
+          <div className="competitor-list"> {/* Can reuse 'competitor-list' class if styling is similar */}
+            {competitorsForRoundView.map((competitor) => (
+              <CompetitorCard key={competitor.ID} competitor={competitor} pointsLabel="Cumulative Points:" />
+            ))}
+          </div>
+        ) : (
+          <p>No competitor standings available for this round yet.</p>
+        )}
+      </section>
     </div>
   );
 };
