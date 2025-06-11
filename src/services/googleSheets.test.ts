@@ -46,7 +46,8 @@ spotify:track:track2_round2,competitor_id_1,2025-03-13T22:40:40Z,2,DT FTW,round_
 spotify:track:track2_round2,competitor_id_2,2025-03-14T01:22:15Z,1,,round_id_2`;
 
 // Define a general mock fetch implementation
-const mockFetchImplementation = (url: string): Promise<Response> => {
+type MockFetchType = (url: string) => Promise<Response>;
+const mockFetchImplementation: MockFetchType = (url) => {
     let csvData = '';
     if (url === '/testdata/rounds.csv') csvData = mockRoundsCsv;
     else if (url === '/testdata/competitors.csv') csvData = mockCompetitorsCsv;
