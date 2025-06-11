@@ -1,5 +1,6 @@
 // src/components/RoundDetails.tsx
 import React, { useState, useEffect, useMemo } from 'react';
+import { getSentimentScore, getSentimentColor } from '../utils/sentimentUtils';
 import { Round, Submission, Vote, Competitor } from '../types';
 import { fetchTrackDataFromBackend, SongData } from '../services/spotifyAPI';
 import VotesChart from './VotesChart';
@@ -249,8 +250,17 @@ const RoundDetails: React.FC<RoundDetailsProps> = ({
                         <ul className="submission-votes-list">
                           {sortedVotesForThisSubmission.map((vote, voteIndex) => {
                             const voterName = getVoterName(vote.VoterID);
+                            let backgroundColor = '';
+                            if (vote.Comment) {
+                              const score = getSentimentScore(vote.Comment);
+                              backgroundColor = getSentimentColor(score);
+                            }
                             return (
-                              <li key={`${vote.VoterID}-${vote.SpotifyURI}-${voteIndex}`} className="submission-vote-item">
+                              <li
+                                key={`${vote.VoterID}-${vote.SpotifyURI}-${voteIndex}`}
+                                className="submission-vote-item"
+                                style={{ backgroundColor }}
+                              >
                                 <p><strong>{voterName}</strong> (+{vote.PointsAssigned})</p>
                                 {vote.Comment && <p><em><ExpandableText text={vote.Comment} maxLength={100} /></em></p>}
                               </li>
