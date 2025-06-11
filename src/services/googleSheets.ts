@@ -2,7 +2,7 @@
 import Papa from 'papaparse';
 import { Round, Competitor, Vote, Submission } from '../types';
 
-const TEST_SHEET_ID = '14xgTqTxigrXPKVnl1nqV-k0Sczr8hZziRdtEXjW2eVQ'; // User-provided test ID
+export const TEST_SHEET_ID = '14xgTqTxigrXPKVnl1nqV-k0Sczr8hZziRdtEXjW2eVQ'; // User-provided test ID
 
 const SHEET_NAMES = {
   rounds: 'rounds',
