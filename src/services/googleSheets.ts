@@ -421,10 +421,12 @@ export const getSubmissions = async (sheetId: string = TEST_SHEET_ID, useLocalTe
         let papaParseConfig: any; // Using any for papaParseConfig
 
         if (isProblematicFirstLine) {
+            // csvStringToParse already has the problematic first line removed.
+            // Now, parse it by reading headers from the *new* first line.
             papaParseConfig = {
                 ...commonConfigBase,
-                header: false,
-                columns: transformedCorrectHeaders,
+                header: true, // Read headers from the (new) first line
+                transformHeader: papaParseTransformHeaderOption, // Use the existing header transformation
             };
         } else {
             papaParseConfig = {
