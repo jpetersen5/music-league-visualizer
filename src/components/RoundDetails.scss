@@ -190,6 +190,14 @@
     // For this step, I will add the NEW simpler .submission-spotify-data version
     // as a direct child of .submission-card as per the prompt's SCSS,
     // and remove the old top-level one.
+
+    .submission-score {
+      font-weight: bold;
+      color: var(--primary-color); // Or choose a color like var(--accent-color) or a specific hex value
+      margin-top: 8px; // Add some space above it
+      display: block; // Make it take its own line for clarity
+      font-size: 1.05em; // Slightly larger
+    }
   }
 
   // New simpler .submission-spotify-data as per prompt, direct child of .submission-card

@@ -35,6 +35,9 @@
 // Styles for the new competitors table
 .competitors-table {
   width: 100%;
+  max-width: 800px; // Limits maximum width
+  margin-left: auto; // Centers the table when max-width is active
+  margin-right: auto; // Centers the table when max-width is active
   border-collapse: collapse;
   margin-top: 15px;
 
