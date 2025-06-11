@@ -46,21 +46,71 @@ spotify:track:track2_round2,competitor_id_1,2025-03-13T22:40:40Z,2,DT FTW,round_
 spotify:track:track2_round2,competitor_id_2,2025-03-14T01:22:15Z,1,,round_id_2`;
 
 // Define a general mock fetch implementation
-type MockFetchType = (url: string) => Promise<Response>;
-const mockFetchImplementation: MockFetchType = (url) => {
+async function mockFetchImplementation(url: string): Promise<Response> {
     let csvData = '';
-    if (url === '/testdata/rounds.csv') csvData = mockRoundsCsv;
-    else if (url === '/testdata/competitors.csv') csvData = mockCompetitorsCsv;
-    else if (url === '/testdata/votes.csv') csvData = mockVotesCsv;
-    else if (url === '/testdata/submissions.csv') csvData = mockSubmissionsCsv;
-    else return Promise.resolve({ ok: false, status: 404, statusText: 'Not Found', text: async () => 'Not Found' } as Response);
+    let ok = true;
+    let status = 200;
+    let statusText = 'OK';
+    // errorText is not directly used in the Response construction but good for clarity
+    // let errorText = '';
+
+    if (url === '/testdata/rounds.csv') {
+        csvData = mockRoundsCsv;
+    } else if (url === '/testdata/competitors.csv') {
+        csvData = mockCompetitorsCsv;
+    } else if (url === '/testdata/votes.csv') {
+        csvData = mockVotesCsv;
+    } else if (url === '/testdata/submissions.csv') {
+        csvData = mockSubmissionsCsv;
+    } else if (url === 'http://error.test/500') { // For testing 500 error
+        ok = false;
+        status = 500;
+        statusText = 'Internal Server Error';
+        csvData = 'Server Error Text'; // Simulate error response body
+    } else if (url === 'http://error.test/404') { // For testing 404 error
+        ok = false;
+        status = 404;
+        statusText = 'Not Found';
+        csvData = 'File Not Found'; // Simulate error response body
+    } else if (url === 'http://error.test/empty') { // For testing empty CSV response
+         csvData = ''; // Empty data
+    } else if (url === 'http://error.test/403') {
+        ok = false; status = 403; statusText = 'Forbidden'; csvData = 'Access denied';
+    } else if (url === 'http://error.test/503') {
+        ok = false; status = 503; statusText = 'Service Unavailable'; csvData = 'Service down';
+    }
+    // Fallback for unhandled URLs used by existing tests for error states in individual functions
+    // These specific URLs are tied to how tests like `getRounds handles fetch error for local data`
+    // were set up before this centralized mock. We need to ensure those tests still can trigger
+    // specific error conditions if they were relying on mockImplementation being set per-test.
+    // For now, the most common error cases are covered by the specific http://error.test URLs
+    // and the direct /testdata/ paths.
+    // A generic fallback for truly unhandled URLs:
+    else if (!url.startsWith('/testdata/')) { // Avoid overriding testdata paths with this generic error
+        console.warn(`Unhandled URL in mockFetchImplementation: ${url}. Returning generic 404.`);
+        ok = false;
+        status = 404;
+        statusText = 'Not Found';
+        csvData = 'Generic error response for unhandled URL';
+    }
+    // If url starts with /testdata/ but isn't one of the above, it means a test is asking for a
+    // testdata file that *doesn't* have a mock constant. This is an error in the test setup.
+    else if (url.startsWith('/testdata/')) {
+        console.error(`mockFetchImplementation: Attempted to fetch unmocked local data: ${url}`);
+        ok = false;
+        status = 404; // Or 500, as it's a server-side (test setup) error
+        statusText = 'Test data not mocked';
+        csvData = `No mock CSV data defined for ${url}`;
+    }
+
 
     return Promise.resolve({
-        ok: true,
-        status: 200,
-        text: async () => csvData,
+        ok,
+        text: () => Promise.resolve(csvData),
+        status,
+        statusText,
     } as Response);
-};
+}
 
 describe('googleSheets service - local data fetching', () => {
     let fetchSpy: jest.SpyInstance;
