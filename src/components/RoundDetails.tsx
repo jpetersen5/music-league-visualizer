@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { getSentimentScore, getSentimentColor } from '../utils/sentimentUtils';
 import { Round, Submission, Vote, Competitor } from '../types';
+import { getSentimentScore } from '../utils/sentimentUtils'; // Already had getSentimentColor
 import { fetchTrackDataFromBackend, SongData } from '../services/spotifyAPI';
 import VotesChart from './VotesChart';
 import ExpandableText from './ExpandableText';
@@ -16,6 +17,11 @@ interface RoundDetailsProps {
   competitorsForRoundView: Competitor[]; // New: Competitors with points up to this round
 }
 
+// Define the extended Submission type for component state
+interface SubmissionWithOverallSentiment extends Submission {
+  overallSentimentScore?: number;
+}
+
 const normalizeID = (id: string): string => {
   return id ? id.toLowerCase().trim() : '';
 };
@@ -28,7 +34,7 @@ const RoundDetails: React.FC<RoundDetailsProps> = ({
   allCompetitors,
   competitorsForRoundView, // New prop
 }) => {
-  const [currentRoundSubmissions, setCurrentRoundSubmissions] = useState<Submission[]>([]);
+  const [currentRoundSubmissions, setCurrentRoundSubmissions] = useState<SubmissionWithOverallSentiment[]>([]);
   const [currentRoundVotes, setCurrentRoundVotes] = useState<Vote[]>([]);
   const [spotifyTrackDetails, setSpotifyTrackDetails] = useState<Record<string, SongData | null>>({});
   const [isLoadingSpotifyData, setIsLoadingSpotifyData] = useState<boolean>(false);
@@ -38,7 +44,7 @@ const RoundDetails: React.FC<RoundDetailsProps> = ({
 
   useEffect(() => {
     if (!selectedRound) {
-      setCurrentRoundSubmissions([]);
+      setCurrentRoundSubmissions([]); // Ensure it's reset with the correct type
       setCurrentRoundVotes([]);
       setSpotifyTrackDetails({});
       setSpotifyError(null);
@@ -60,7 +66,32 @@ const RoundDetails: React.FC<RoundDetailsProps> = ({
     const filteredSubmissions = allSubmissions.filter(sub =>
       sub.RoundID && normalizeID(sub.RoundID) === normalizedSelectedRoundID
     );
-    setCurrentRoundSubmissions(filteredSubmissions);
+
+    // Calculate overall sentiment for these submissions
+    const submissionsWithOverallSentiment: SubmissionWithOverallSentiment[] = filteredSubmissions.map(sub => {
+      const votesForThisSubmission = allVotes.filter(
+        vote => vote.RoundID && normalizeID(vote.RoundID) === normalizedSelectedRoundID &&
+                vote.SpotifyURI === sub.SpotifyURI &&
+                vote.Comment && vote.Comment.trim() !== ''
+      );
+
+      if (votesForThisSubmission.length === 0) {
+        return { ...sub, overallSentimentScore: undefined }; // Or 0 if you prefer a default
+      }
+
+      const sentimentScores = votesForThisSubmission.map(vote => getSentimentScore(vote.Comment));
+      // Filter out potential NaN scores if getSentimentScore could still somehow produce them (though it shouldn't after earlier fix)
+      const validScores = sentimentScores.filter(score => !isNaN(score));
+
+      if (validScores.length === 0) {
+        return { ...sub, overallSentimentScore: undefined }; // Or 0
+      }
+
+      const averageSentiment = validScores.reduce((sum, score) => sum + score, 0) / validScores.length;
+
+      return { ...sub, overallSentimentScore: parseFloat(averageSentiment.toFixed(2)) }; // Keep it to 2 decimal places
+    });
+    setCurrentRoundSubmissions(submissionsWithOverallSentiment); // Set the processed submissions
 
     const filteredVotes = allVotes.filter(vote =>
       vote.RoundID && normalizeID(vote.RoundID) === normalizedSelectedRoundID
@@ -230,6 +261,11 @@ const RoundDetails: React.FC<RoundDetailsProps> = ({
                       <br />
                       Submitted by: {submitterName}
                       {sub.Comment && <p><em>Comment: {sub.Comment}</em></p>}
+                      {typeof sub.overallSentimentScore === 'number' && (
+                        <p className="submission-overall-sentiment">
+                          Overall Sentiment: {sub.overallSentimentScore.toFixed(2)}
+                        </p>
+                      )}
                       {trackInfo && (
                         <div className="submission-spotify-data">
                           <p><strong>Additional Spotify Data:</strong></p>

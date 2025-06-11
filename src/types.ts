@@ -31,4 +31,5 @@ export interface Submission {
   Comment: string;
   RoundID: string;
   VisibleToVoters: "Yes" | "No";
+  overallSentimentScore?: number; // New field
 }
