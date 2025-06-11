@@ -176,6 +176,9 @@ const RoundDetails: React.FC<RoundDetailsProps> = ({
                   return pointsB - pointsA;
                 })
                 .map((sub) => {
+                const totalScoreForSubmission = currentRoundVotes
+                  .filter(vote => vote.SpotifyURI === sub.SpotifyURI)
+                  .reduce((sum, vote) => sum + vote.PointsAssigned, 0);
                 const trackInfo = spotifyTrackDetails[sub.SpotifyURI];
                 const albumArtUrl = trackInfo?.image_url;
                 const submitterName = getSubmitterName(sub.SubmitterID);
@@ -197,6 +200,8 @@ const RoundDetails: React.FC<RoundDetailsProps> = ({
                       <strong>{sub.Title}</strong> by {sub.Artist}
                       <br />
                       Album: {sub.Album}
+                      <br />
+                      <span className="submission-score">Score: {totalScoreForSubmission}</span>
                       {sub.SpotifyURI.startsWith('spotify:track:') && (
                         <>
                           {' | '}
