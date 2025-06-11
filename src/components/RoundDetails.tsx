@@ -1,15 +1,12 @@
 // src/components/RoundDetails.tsx
 import React, { useState, useEffect, useMemo } from 'react';
-import { Round, Submission, Vote, Competitor } from '../types'; // Added Competitor
-// Removed: import { getSubmissions, getVotes } from '../services/googleSheets';
+import { Round, Submission, Vote, Competitor } from '../types';
 import { fetchTrackDataFromBackend, SongData } from '../services/spotifyAPI';
 import VotesChart from './VotesChart';
-import CompetitorCard from './CompetitorCard'; // New import
-import ExpandableText from './ExpandableText'; // Added import
+import ExpandableText from './ExpandableText';
 import './RoundDetails.scss'; // Import SCSS file
 
 interface RoundDetailsProps {
-  // Removed: sheetId: string | null;
   selectedRound: Round | null;
   onBackToList: () => void;
   allSubmissions: Submission[];
@@ -33,9 +30,7 @@ const RoundDetails: React.FC<RoundDetailsProps> = ({
   const [currentRoundSubmissions, setCurrentRoundSubmissions] = useState<Submission[]>([]);
   const [currentRoundVotes, setCurrentRoundVotes] = useState<Vote[]>([]);
   const [spotifyTrackDetails, setSpotifyTrackDetails] = useState<Record<string, SongData | null>>({});
-  // Removed: isLoading state for sheet data
   const [isLoadingSpotifyData, setIsLoadingSpotifyData] = useState<boolean>(false);
-  // Removed: error state for sheet data
   const [spotifyError, setSpotifyError] = useState<string | null>(null);
   const [competitorMap, setCompetitorMap] = useState<Map<string, string>>(new Map());
 
@@ -111,10 +106,9 @@ const RoundDetails: React.FC<RoundDetailsProps> = ({
     } else {
       setIsLoadingSpotifyData(false); // No submissions, so no Spotify data to load
     }
-    // setError and setIsLoading related to sheet data are removed
-    // as this is handled by SheetDataViewer
+    // setError and setIsLoading related to sheet data are removed as this is handled by SheetDataViewer
 
-  }, [selectedRound, allSubmissions, allVotes, allCompetitors]); // Dependencies updated
+  }, [selectedRound, allSubmissions, allVotes, allCompetitors]);
 
   // Memoize submitter name lookup function for potential use in render
   const getSubmitterName = useMemo(() => (submitterId: string | undefined): string => {
@@ -170,8 +164,18 @@ const RoundDetails: React.FC<RoundDetailsProps> = ({
         <section className="submissions-section">
           <h3>Submissions ({currentRoundSubmissions.length})</h3>
           {currentRoundSubmissions.length === 0 && !isLoadingSpotifyData ? <p className="no-data-message">No submissions for this round.</p> : (
-            <div className="submission-list"> {/* Changed ul to div and added a class */}
-              {currentRoundSubmissions.map((sub) => {
+            <div className="submission-list">
+              {[...currentRoundSubmissions]
+                .sort((a, b) => {
+                  const pointsA = currentRoundVotes
+                    .filter(vote => vote.SpotifyURI === a.SpotifyURI)
+                    .reduce((sum, vote) => sum + vote.PointsAssigned, 0);
+                  const pointsB = currentRoundVotes
+                    .filter(vote => vote.SpotifyURI === b.SpotifyURI)
+                    .reduce((sum, vote) => sum + vote.PointsAssigned, 0);
+                  return pointsB - pointsA;
+                })
+                .map((sub) => {
                 const trackInfo = spotifyTrackDetails[sub.SpotifyURI];
                 const albumArtUrl = trackInfo?.image_url;
                 const submitterName = getSubmitterName(sub.SubmitterID);
@@ -185,7 +189,7 @@ const RoundDetails: React.FC<RoundDetailsProps> = ({
                 });
 
                 return (
-                  <div key={sub.SpotifyURI + sub.SubmitterID} className="submission-card"> {/* Changed li to div and class name */}
+                  <div key={sub.SpotifyURI + sub.SubmitterID} className="submission-card">
                     {albumArtUrl && (
                       <img src={albumArtUrl} alt={sub.Album || 'Album art'} className="submission-item-artwork" />
                     )}
@@ -194,12 +198,32 @@ const RoundDetails: React.FC<RoundDetailsProps> = ({
                       <br />
                       Album: {sub.Album}
                       {sub.SpotifyURI.startsWith('spotify:track:') && (
-                         <> | <a href={`https://open.spotify.com/track/${sub.SpotifyURI.split(':')[2]}`} target="_blank" rel="noopener noreferrer">Listen on Spotify</a></>
+                        <>
+                          {' | '}
+                          <a
+                            href={`https://open.spotify.com/track/${sub.SpotifyURI.split(':')[2]}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title="Listen on Spotify"
+                            className="spotify-link-icon"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 24 24"
+                              fill="currentColor"
+                              width="1em" // Default size, can be overridden by CSS
+                              height="1em" // Default size, can be overridden by CSS
+                              aria-hidden="true"
+                              className="spotify-play-icon" // Added class for styling
+                            >
+                              <path d="M8 5v14l11-7z" />
+                            </svg>
+                          </a>
+                        </>
                       )}
                       <br />
-                      Submitted by: {submitterName} {/* Display name */}
-                      {sub.Comment && <p><em>Comment: <ExpandableText text={sub.Comment} maxLength={150} /></em></p>}
-                      <p className="submission-item-visibility">Visible to Voters: {sub.VisibleToVoters}</p>
+                      Submitted by: {submitterName}
+                      {sub.Comment && <p><em>Comment: {sub.Comment}</em></p>}
                       {trackInfo && (
                         <div className="submission-spotify-data">
                           <p><strong>Additional Spotify Data:</strong></p>
@@ -222,7 +246,7 @@ const RoundDetails: React.FC<RoundDetailsProps> = ({
                             const voterName = getVoterName(vote.VoterID);
                             return (
                               <li key={`${vote.VoterID}-${vote.SpotifyURI}-${voteIndex}`} className="submission-vote-item">
-                                <p><strong>{voterName}</strong> ({vote.PointsAssigned} points)</p>
+                                <p><strong>{voterName}</strong> (+{vote.PointsAssigned})</p>
                                 {vote.Comment && <p><em><ExpandableText text={vote.Comment} maxLength={100} /></em></p>}
                               </li>
                             );
@@ -247,15 +271,40 @@ const RoundDetails: React.FC<RoundDetailsProps> = ({
       <section className="competitors-cumulative-points-section">
         <h3>Standings (Up to {selectedRound.Name})</h3>
         {competitorsForRoundView && competitorsForRoundView.length > 0 ? (
-          <div className="competitor-list"> {/* Can reuse 'competitor-list' class if styling is similar */}
-            {[...competitorsForRoundView].sort((a, b) => {
-              const pointsA = a.totalPoints === undefined ? 0 : a.totalPoints;
-              const pointsB = b.totalPoints === undefined ? 0 : b.totalPoints;
-              return pointsB - pointsA; // For descending order
-            }).map((competitor) => (
-              <CompetitorCard key={competitor.ID} competitor={competitor} pointsLabel="Cumulative Points:" />
-            ))}
-          </div>
+          <table className="competitors-table">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Name</th>
+                <th>Points</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[...competitorsForRoundView]
+                .sort((a, b) => {
+                  const pointsA = a.totalPoints === undefined ? 0 : a.totalPoints;
+                  const pointsB = b.totalPoints === undefined ? 0 : b.totalPoints;
+                  return pointsB - pointsA; // For descending order
+                })
+                .map((competitor, index, sortedCompetitors) => {
+                  // Basic rank calculation (handle ties by giving same rank)
+                  let rank = index + 1;
+                  if (index > 0 && sortedCompetitors[index - 1].totalPoints === competitor.totalPoints) {
+                    // If current competitor has same points as previous, they have the same rank
+                    // Need to find the rank of the first competitor with these points
+                    const firstEqualCompetitorIndex = sortedCompetitors.findIndex(c => c.totalPoints === competitor.totalPoints);
+                    rank = firstEqualCompetitorIndex + 1;
+                  }
+                  return (
+                    <tr key={competitor.ID}>
+                      <td>{rank}</td>
+                      <td>{competitor.Name}</td>
+                      <td>{competitor.totalPoints ?? 0}</td>
+                    </tr>
+                  );
+                })}
+            </tbody>
+          </table>
         ) : (
           <p>No competitor standings available for this round yet.</p>
         )}

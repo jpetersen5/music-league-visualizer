@@ -338,3 +338,67 @@
     color: var(--dark-gray);
   }
 }
+
+// Styles for the new competitors table (shared with CompetitorsView.scss)
+// If these styles are identical, consider moving to a shared SCSS partial.
+.competitors-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px; // Added to match CompetitorsView.scss
+
+  th, td {
+    border: 1px solid var(--medium-gray);
+    padding: 8px 12px;
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  th {
+    background-color: var(--light-gray);
+    color: var(--text-color);
+    font-weight: 600;
+  }
+
+  tbody tr:nth-child(odd) {
+    background-color: var(--white);
+  }
+
+  tbody tr:nth-child(even) {
+    background-color: var(--off-white); // A slightly different shade for even rows
+  }
+
+  tbody tr:hover {
+    background-color: var(--accent-color-light); // Lighter accent for hover
+    color: var(--text-color); // Ensure text remains readable
+  }
+
+  td:first-child { // Rank column
+    text-align: center;
+    font-weight: bold;
+  }
+}
+
+// Styles for Spotify icon link
+.spotify-link-icon {
+  display: inline-flex; // To align icon properly with text like " | "
+  align-items: center;
+  text-decoration: none; // Remove underline from the link itself
+  color: var(--link-color); // Inherit link color for the icon by default
+
+  .spotify-play-icon {
+    width: 1.2em; // Adjust size as needed
+    height: 1.2em; // Adjust size as needed
+    fill: currentColor; // Use the anchor's color (var(--link-color))
+    vertical-align: middle; // Align better with surrounding text
+    margin-left: 0.25em; // Small space after the " | "
+    transition: transform 0.1s ease-in-out;
+  }
+
+  &:hover {
+    text-decoration: none; // No underline on hover for the icon link
+    .spotify-play-icon {
+      fill: var(--accent-color); // Change color on hover, e.g., to an accent color
+      transform: scale(1.1); // Slight zoom effect
+    }
+  }
+}

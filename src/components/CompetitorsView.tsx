@@ -1,19 +1,13 @@
 // src/components/CompetitorsView.tsx
 import React from 'react';
 import { Competitor } from '../types';
-import CompetitorCard from './CompetitorCard'; // New import
-// Removed: import { getCompetitors } from '../services/googleSheets';
 import './CompetitorsView.scss'; // Import SCSS file
 
 interface CompetitorsViewProps {
-  // Removed: sheetId: string | null;
   competitors: Competitor[];
 }
 
 const CompetitorsView: React.FC<CompetitorsViewProps> = ({ competitors }) => {
-  // Removed: useState for competitors, isLoading, error
-  // Removed: useEffect for data fetching
-
   // Parent component (SheetDataViewer) handles loading and error states.
   // This component now directly uses the competitors prop.
 
@@ -31,11 +25,34 @@ const CompetitorsView: React.FC<CompetitorsViewProps> = ({ competitors }) => {
   return (
     <div className="competitors-view-container">
       <h2>Competitors</h2>
-      <div className="competitor-list">
-        {sortedCompetitors.map((competitor) => (
-          <CompetitorCard key={competitor.ID} competitor={competitor} pointsLabel="Total Points:" />
-        ))}
-      </div>
+      <table className="competitors-table">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Name</th>
+            <th>Total Points</th>
+          </tr>
+        </thead>
+        <tbody>
+          {sortedCompetitors.map((competitor, index, array) => {
+            // Rank calculation, handling ties
+            let rank = index + 1;
+            if (index > 0 && array[index - 1].totalPoints === competitor.totalPoints) {
+              // If current competitor has same points as previous, they have the same rank
+              // Need to find the rank of the first competitor with these points
+              const firstEqualCompetitorIndex = array.findIndex(c => c.totalPoints === competitor.totalPoints);
+              rank = firstEqualCompetitorIndex + 1;
+            }
+            return (
+              <tr key={competitor.ID}>
+                <td>{rank}</td>
+                <td>{competitor.Name}</td>
+                <td>{competitor.totalPoints ?? 0}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   );
 };

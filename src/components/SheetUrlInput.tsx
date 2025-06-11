@@ -1,5 +1,5 @@
 // src/components/SheetUrlInput.tsx
-import React, { useState } from 'react'; // Fixed import
+import React, { useState } from 'react';
 import { extractSheetIdFromUrl } from '../services/googleSheets';
 import './SheetUrlInput.scss'; // Import SCSS file
 
@@ -24,9 +24,7 @@ const SheetUrlInput: React.FC<SheetUrlInputProps> = ({ onSheetIdSubmit, disabled
     if (sheetId) {
       onSheetIdSubmit(sheetId);
       // Optionally clear input after successful submission:
-      // setInputValue('');
     } else {
-      // Corrected error message
       setError('Invalid Google Sheet URL. Please ensure it is a valid URL and the sheet is shared correctly.');
     }
   };
@@ -39,7 +37,6 @@ const SheetUrlInput: React.FC<SheetUrlInputProps> = ({ onSheetIdSubmit, disabled
   };
 
   return (
-    // Changed className for the main container
     <div className="sheet-url-input-container">
       <input
         type="text"
@@ -48,12 +45,12 @@ const SheetUrlInput: React.FC<SheetUrlInputProps> = ({ onSheetIdSubmit, disabled
         placeholder="Paste your Google Sheet URL here"
         disabled={disabled}
         aria-label="Google Sheet URL"
-        className="sheet-url-input-field" // Added className
+        className="sheet-url-input-field"
       />
       <button
         onClick={handleSubmit}
         disabled={disabled}
-        className="sheet-url-input-button" // Added className
+        className="sheet-url-input-button"
       >
         Load Data
       </button>
