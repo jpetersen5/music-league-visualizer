@@ -9,6 +9,7 @@ export interface Round {
 export interface Competitor {
   ID: string;
   Name: string;
+  totalPoints?: number;
 }
 
 export interface Vote {
